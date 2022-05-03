@@ -19,6 +19,9 @@ public class UIManager : MonoBehaviour
     public Button rainButton;
     public InputField[] rainVariables;
 
+    [System.NonSerialized]
+    public string currTerrain = "";
+
     TerrainManager terrain;
 
     void Start()
@@ -287,7 +290,7 @@ public class UIManager : MonoBehaviour
             terrain.Erode(ref terrain.erosionNodes);
         }
 
-        terrain.GenerateMesh(terrain.EndErosion(terrain.erosionNodes, true, true, terrain.erosionStartTime), "ErodedTerrain", new Vector2(terrain.textureSize + 10, 0), false);
+        terrain.GenerateMesh(terrain.EndErosion(terrain.erosionNodes, true, true, terrain.erosionStartTime, "erosion"), "ErodedTerrain", new Vector2(terrain.textureSize + 10, 0), false);
 
         rainButton.interactable = true;
     }
@@ -371,5 +374,39 @@ public class UIManager : MonoBehaviour
         }
 
         return result;
+    }
+
+    public void Output()
+    {
+        string path = Application.dataPath + "/output.txt";
+        string write = "";
+
+        switch(currTerrain) {
+            case "erosion":
+                for(int i = 0; i < terrain.textureSize; i++)
+                {
+                    for(int j = 0; j < terrain.textureSize; j++)
+                    {
+                        write += (terrain.erosionNodes[i, j].getAlt() / terrain.altitudeMultiplier).ToString() + " ";
+                    }
+                    write += "\n";
+                }
+                break;
+            case "rain":
+                for (int i = 0; i < terrain.textureSize; i++)
+                {
+                    for (int j = 0; j < terrain.textureSize; j++)
+                    {
+                        write += (terrain.rainNodes[i, j].getAlt() / terrain.altitudeMultiplier).ToString() + " ";
+                    }
+                    write += "\n";
+                }
+                break;
+            default:
+                return;
+        }
+
+        System.IO.File.WriteAllText(path, write);
+        currTerrain = "";
     }
 }

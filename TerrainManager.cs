@@ -61,14 +61,16 @@ public class TerrainManager : MonoBehaviour
     [System.NonSerialized]
     public float rainStartTime;
 
+    UIManager ui;
+
     void Start()
     {
-
+        ui = gameObject.GetComponent<UIManager>();
     }
 
     private void Update()
     {
-        if(showingInfo && Input.GetKeyDown(KeyCode.Mouse0))
+        if(showingInfo && Input.GetKeyDown(KeyCode.Escape))
         {
             infoPanel.SetActive(false);
             showingInfo = false;
@@ -106,11 +108,11 @@ public class TerrainManager : MonoBehaviour
                         }
                     }
 
-                    heights = EndErosion(rainNodes, false, false, -1f);
+                    heights = EndErosion(rainNodes, false, false, -1f, "rain");
                 } else
                 {
                     Debug.Log("Done Raining");
-                    heights = EndErosion(rainNodes, true, true, rainStartTime);
+                    heights = EndErosion(rainNodes, true, true, rainStartTime, "rain");
                     rainButton.interactable = true;
                     stillEroding = false;
                     isRaining = false;
@@ -201,7 +203,7 @@ public class TerrainManager : MonoBehaviour
 
         System.IO.File.WriteAllText(Application.dataPath + "/heights.txt", write);*/
 
-        GenerateMesh(terrainHeights, "Terrain", Vector2.zero, true);
+        GenerateMesh(terrainHeights, "Terrain", Vector2.zero, replaceHeights);
     }
 
     public void GenerateMesh(float[,] heights, string tag, Vector2 offset, bool useCurve)
@@ -350,7 +352,7 @@ public class TerrainManager : MonoBehaviour
         }
     }
 
-    public float[,] EndErosion(WaterNode[,] nodes, bool addSediment, bool displayData, float startTime)
+    public float[,] EndErosion(WaterNode[,] nodes, bool addSediment, bool displayData, float startTime, string type)
     {
         //Establish heights between 0 and 1 that can be used to generate a mesh
         float[,] usableHeights = new float[textureSize, textureSize];
@@ -401,7 +403,9 @@ public class TerrainManager : MonoBehaviour
             infoText.text += "Overall Minimum: " + overallMin + "\n";
             infoText.text += "Previous Minimum: " + prevMin + "\n\n";
 
-            infoText.text += "Click to close this window";
+            infoText.text += "Press escape to close this window";
+
+            ui.currTerrain = type;
 
             infoPanel.SetActive(true);
             showingInfo = true;
