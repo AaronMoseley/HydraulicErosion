@@ -70,7 +70,7 @@ public class TerrainManager : MonoBehaviour
 
     private void Update()
     {
-        if(showingInfo && Input.GetKeyDown(KeyCode.Escape))
+        if(showingInfo && Input.GetKeyDown(KeyCode.Space))
         {
             infoPanel.SetActive(false);
             showingInfo = false;
@@ -403,7 +403,7 @@ public class TerrainManager : MonoBehaviour
             infoText.text += "Overall Minimum: " + overallMin + "\n";
             infoText.text += "Previous Minimum: " + prevMin + "\n\n";
 
-            infoText.text += "Press escape to close this window";
+            infoText.text += "Press space to close this window";
 
             ui.currTerrain = type;
 
